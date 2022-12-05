@@ -1,0 +1,38 @@
+Mô tả database:
+GIAOVIEN(MAGV(PM),HOTEN,LUONG,PHAI,NGSINH,DIACHI,GVQLCM,MABM(FK))
+--> 1 bộ môn sẽ có nhiều giáo viên dạy
+
+BOMON(MABM(PM),TENBM,PHONG,DIENTHOAI,TRUONGBM(FK),MAKHOA(FK),NGAYNHAMCHUC)
+--> 1 bộ môn sẽ có 1 giáo viên làm trưởng bộ môn
+--> 1 bộ môn sẽ thuộc về 1 khoa
+
+KHOA(MAKHOA(PM),TENKHOA,NAMTL,PHONG,DIENTHOAI,TRUONGKHOA(FK),NGAYNHAMCHUC)
+--> 1 khoa sẽ có 1 giáo viên làm trưởng khoa, NAMTL (năm thành lập)
+
+GV_DT(MAGV(PM,FK),DIENTHOAI(PM))
+--> 1 giáo viên sẽ có nhiều điện thoại, vì mỗi số điện thoại là khác nhau
+nên có thể đặt MAGV và DIENTHOAI làm khóa chính
+--> MAGV là khóa ngoại tham chiếu đến bảng GIAOVIEN
+
+NGUOITHAN(MAGV(PM,FK),TEN(PM),NSINH,PHAI)
+--> 1 giáo viên sẽ có nhiều người thân, vì mỗi người thân trong gia đình là khác nhau
+nên có thể đặt MAGV và TEN làm khóa chính
+--> MAGV là khóa ngoại tham chiếu đến bảng GIAOVIEN
+
+CHUDE(MACD(PM),TENCD)
+
+DETAI(MADT(PM),TENDT,CAPQL,KINHPHI,NGAYBG,NGAYKT,MACD(FK),GVCNDT)
+--> 1 chủ đề sẽ có nhiều đề tài
+--> 1 đề tài sẽ có một giáo viên chủ nhiệm đề tài GVCNDT
+
+CONGVIEC(MADT(PM,FK),SOTT(PM),TENCV,NGAYBG,NGAYKT)
+--> 1 đề tài sẽ bao gồm nhiều công việc khác nhau
+và có số thứ tự tương ứng. 
+--> Nên có thể kết hợp MADT và SOTT làm khóa chính
+
+THAMGIADT(MAGV(PM, FK),MADT(PM, FK),STT(PM, FK),PHUCAP,KETQUA)
+--> 1 giáo viên có thể tham gia nhiều đề tài, và 1 đề tài có nhiều giáo viên tham gia. 
+NHƯNG ở đây trong 1 đề tài sẽ có nhiều công việc, 
+nên CỤ THỂ sẽ là giáo viên tham gia nhiều công việc, 1 công việc có thể làm bởi nhiều giáo viên
+--> 1 bộ gồm 2 khóa (MADT,STT) sẽ là khóa ngoại tham chiếu đến khóa chính bảng công việc
+--> 1 khóa ngoại còn lại là MAGV sẽ là khóa ngoại tham chiếu đến khóa chính bảng giáo viên

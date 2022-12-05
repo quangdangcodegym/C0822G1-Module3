@@ -57,3 +57,11 @@ viên bộ môn Hệ thống thông tin mà không trực thuộc bộ môn hệ
 -- Câu B7: Tìm các giáo viên (MAGV) mà tham gia tất cả các đề tài (Dùng NOT EXISTS)
 -- Câu B9: Tìm tên các giáo viên ‘HTTT’ mà tham gia tất cả các đề tài thuộc chủ đề ‘QLGD
 
+
+-- ADVANCED
+-- Cho biết tên giáo viên và tên của giáo viên có nhiều người thân nhất
+-- Cho biết tên của giáo viên lớn tuổi nhất của bộ môn hệ thống thông tin
+-- Cho biết tên những đề tài mà giáo viên Nguyễn Hoài An chưa tham gia
+-- Cho biết tên của giáo viên chủ nhiệm nhiều đề tài nhất.
+-- Cho biết tên giáo viên và tên bộ môn của giáo viên tham gia nhiều đề tài nhất
+-- Cho biết tên đề tài nào mà được tất cả giáo viên của bộ môn hóa hữu cơ tham gia
