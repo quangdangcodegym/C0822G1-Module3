@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <link rel="stylesheet" href="../css/bootstrap.min.css" />
+  </head>
+  <style>
+    .coupon-inner {
+      padding: 10px 20px 25px;
+    }
+    .coupon-inner input {
+      margin-bottom: 12px;
+      padding: 10px;
+      margin: 10px;
+      width: 100%;
+    }
+    h3 {
+      color: white;
+      background-color: black;
+      margin: 10px;
+      padding: 5px 15px;
+    }
+    .coupon-inner button {
+      margin: 10px;
+      color: white;
+      background-color: black;
+      padding: 10px;
+      width: 25%;
+    }
+    .cart_subtotal {
+      display: -webkit-box;
+      -webkit-box-pack: justify;
+    }
+    .cart_subtotal p.cart-amount {
+      font-size: 18px;
+      font-weight: 500;
+    }
+    .text-right {
+      display: block;
+      color: red;
+    }
+    .checkout_btn{
+        text-align: right;
+    }
+    .checkout_btn a:hover {
+      background: red;
+    }
+    .checkout_btn a {
+      color: white;
+      padding: 3px 14px;
+      line-height: 30px;
+      font-weight: 700;
+      display: inline-block;
+      text-transform: uppercase;
+      margin-bottom: 0;
+    }
+  </style>
+  <body>
+    <div class="border">
+      <div class="row">
+        <div class="col-lg-6">
+          <div>
+            <h3>Coupon</h3>
+          </div>
+          <div class="coupon-inner">
+            <p>Enter your coupon code if you have one.</p>
+            <input type="text" value="Coupon code" />
+            <button type="submit">Apply coupon</button>
+          </div>
+        </div>
+        <div class="col-lg-6">
+          <div>
+            <h3>CART TOTALS</h3>
+          </div>
+          <div class="cart_subtotal">
+            <p>Subtotal</p>
+            <p class="cart-amount">£215.00</p>
+          </div>
+          <div class="cart_subtotal">
+            <p>Shipping</p>
+            <p class="cart-amount"><span>Flat Rate:</span> "£255.00"</p>
+          </div>
+          <div class="text-right"><p>Calculate shipping</p></div>
+          <div class="cart_subtotal">
+            <p>Total</p>
+            <p class="cart-amount">£215.00</p>
+          </div>
+          <div class="checkout_btn">
+            <a href="#">Proceed to Checkout</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

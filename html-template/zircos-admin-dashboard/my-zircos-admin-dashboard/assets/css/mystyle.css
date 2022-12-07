@@ -1,0 +1,40 @@
+.wrapper{
+    width: 100%;
+}
+#topnav{
+    padding: 0 12px;
+}
+.navbar-custom{
+    padding: 0 10px;
+    background-color: #36404e;
+}
+.top-menu > li{
+    float: left;
+}
+.top-menu > li a{
+    padding: 0 15px;
+}
+.notification-list{
+
+}
+.notification-list .noti-icon{
+    font-size: 22px;
+    line-height: 70px;
+}
+.noti-icon-badge{
+    position: absolute;
+    top: 12px;
+    right: 12px;
+}
+.logo-box{
+    float: left;
+}
+.logo{
+    line-height: 70px;
+}
+.my-app-search{
+    max-width: 180px;
+    float: left;
+    padding-top: 20px;
+    margin-left: 10px;
+}
