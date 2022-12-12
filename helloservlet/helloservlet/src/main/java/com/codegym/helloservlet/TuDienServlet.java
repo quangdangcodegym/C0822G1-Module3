@@ -20,12 +20,16 @@ public class TuDienServlet extends HttpServlet {
 
         tudiens.put("Hello", "Xin chao");
         tudiens.put("Apple", "qua tao");
+
+
     }
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         System.out.println("Chay vao ham doGEt");
         PrintWriter outWriter = resp.getWriter();
+
+        getServletContext().setAttribute("dung", 10000);
 
         outWriter.println("<!DOCTYPE html>\n" +
                 "<html lang=\"en\">\n" +

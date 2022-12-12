@@ -26,6 +26,8 @@ public class Tudien1Servlet extends HttpServlet {
         RequestDispatcher requestDispatcher = req.getRequestDispatcher("/tudien.jsp");
         requestDispatcher.forward(req, resp);
 
+        getServletContext().getAttribute("dung");
+
     }
 
     @Override

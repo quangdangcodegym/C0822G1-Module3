@@ -1,0 +1,29 @@
+Java Servlet 05 - Cấu hình Java Servlet bằng Java Annotation
+https://www.youtube.com/watch?v=IfKecybhpxY&list=PLsfLgp1K1xQ53rzo7vo2dKamBu0bj7lkv&index=5
+
+Java Servlet 03 - Chu kỳ sống của Servlet và Ví dụ Hello Servlet
+https://www.youtube.com/watch?v=I-OjMUFw0_0&list=PLsfLgp1K1xQ53rzo7vo2dKamBu0bj7lkv&index=3
+
+Java Servlet 06 - ServletRequest trong Java Servlet
+https://www.youtube.com/watch?v=1QfEzFjLcHE&list=PLsfLgp1K1xQ53rzo7vo2dKamBu0bj7lkv&index=6
+
+Java Servlet 07 - ServletResponse trong Java Servlet
+https://www.youtube.com/watch?v=foj7nXcd9-8&list=PLsfLgp1K1xQ53rzo7vo2dKamBu0bj7lkv&index=7
+
+Java Servlet 09 - HTTP Response Code 
+https://www.youtube.com/watch?v=6hVPRT1ODLM&list=PLsfLgp1K1xQ53rzo7vo2dKamBu0bj7lkv&index=9
+
+Java Servlet 10 - Đọc dữ liệu gửi lên từ client qua URL trong Java Web
+https://www.youtube.com/watch?v=GE9AxR6F4_I&list=PLsfLgp1K1xQ53rzo7vo2dKamBu0bj7lkv&index=10
+
+Java Servlet 11 - Đọc dữ liệu từ POST và GET trong HTML Form
+https://www.youtube.com/watch?v=3D1-eD3wdaQ&list=PLsfLgp1K1xQ53rzo7vo2dKamBu0bj7lkv&index=11
+
+Java Servlet 13 - Redirect Chuyển hướng trang web trong Java Servlet 
+https://www.youtube.com/watch?v=Qd2Sb_5MVDQ&list=PLsfLgp1K1xQ53rzo7vo2dKamBu0bj7lkv&index=12
+
+
+
+
+
+

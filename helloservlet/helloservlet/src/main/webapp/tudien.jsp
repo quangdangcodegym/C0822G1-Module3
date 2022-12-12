@@ -12,8 +12,10 @@
     <label>Key </label>
     <input type="text" name="keyword">
     <label>Result: ${requestScope.kq}</label>
+
     <button type="submit"> Translate</button>
 
+    <%  application.getAttribute("dung"); %>
     <c:if test="${requestScope.keys != null}">
         <ul>
             <c:forEach items="${requestScope.keys}" var="item">
