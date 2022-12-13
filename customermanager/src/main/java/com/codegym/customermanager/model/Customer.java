@@ -4,17 +4,17 @@ public class Customer {
     private long id;
     private String name;
     private String address;
-    private String country;
+    private long idCountry;
 
     public Customer() {
 
     }
 
-    public Customer(long id, String name, String address, String country) {
+    public Customer(long id, String name, String address, long idCountry) {
         this.id = id;
         this.name = name;
         this.address = address;
-        this.country = country;
+        this.idCountry = idCountry;
     }
 
     public long getId() {
@@ -41,11 +41,11 @@ public class Customer {
         this.address = address;
     }
 
-    public String getCountry() {
-        return country;
+    public long getIdCountry() {
+        return idCountry;
     }
 
-    public void setCountry(String country) {
-        this.country = country;
+    public void setIdCountry(long idCountry) {
+        this.idCountry = idCountry;
     }
 }

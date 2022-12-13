@@ -17,7 +17,7 @@
 <div class="container">
   <h1>Edit customer</h1>
   <form method="post">
-    <input type="hidden" name="id" value="${requestScope.customer.getId()}"">
+    <input type="hidden" name="id" value="${requestScope.customer.getId()}">
     <label for="idName">Name: </label>
     <input type="text" id="idName" name="name" class="form-control" value="${requestScope.customer.getName()}">
 
@@ -25,7 +25,13 @@
     <input type="text" id="idAdress" name="address" class="form-control" value="${requestScope.customer.getAddress()}">
 
     <label for="idCountry">Country: </label>
-    <input type="text" id="idCountry" name="country" class="form-control" value="${requestScope.customer.getCountry()}">
+    <select id="idCountry" name="idCountry">
+      <c:forEach items="${applicationScope.countries}" var="country">
+        <option value="${country.getId()}"
+            <c:if test="${country.getId() == customer.getIdCountry() }"> selected</c:if>
+        >${country.getName()}</option>
+      </c:forEach>
+    </select>
 
     <button >Edit</button>
   </form>

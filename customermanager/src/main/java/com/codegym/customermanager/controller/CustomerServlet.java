@@ -1,6 +1,8 @@
 package com.codegym.customermanager.controller;
 
+import com.codegym.customermanager.model.Country;
 import com.codegym.customermanager.model.Customer;
+import com.codegym.customermanager.service.CountryService;
 import com.codegym.customermanager.service.CustomerService;
 
 import javax.servlet.RequestDispatcher;
@@ -10,14 +12,22 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.List;
 
 @WebServlet(name = "CustomerServlet" , urlPatterns = { "/customers"})
 public class CustomerServlet extends HttpServlet {
     private CustomerService customerService;
+    private CountryService countryService;
 
     @Override
     public void init() throws ServletException {
         customerService = new CustomerService();
+        countryService = new CountryService();
+
+        List<Country> countryList = countryService.getAllCountry();
+        if (getServletContext().getAttribute("countries") == null) {
+            getServletContext().setAttribute("countries", countryList);
+        }
     }
 
     @Override
@@ -34,6 +44,14 @@ public class CustomerServlet extends HttpServlet {
                 break;
             case "edit":
                 showEditCustomer(req, resp);
+                break;
+            case "delete":
+                long id = Long.parseLong(req.getParameter("id"));
+                customerService.deleteCustomer(id);
+
+                req.setAttribute("customers", customerService.getAllCustomers());
+                RequestDispatcher requestDispatcher1 = req.getRequestDispatcher("/customer.jsp");
+                requestDispatcher1.forward(req, resp);
                 break;
             default:
                 showListCustomer(req, resp);
@@ -87,12 +105,12 @@ public class CustomerServlet extends HttpServlet {
         long id = Long.parseLong(req.getParameter("id"));
         String name = req.getParameter("name");
         String address = req.getParameter("address");
-        String country = req.getParameter("country");
+        long idCountry = Long.parseLong(req.getParameter("idCountry"));
 
         Customer customer = customerService.findCustomerById(id);
         customer.setName(name);
         customer.setAddress(address);
-        customer.setCountry(country);
+        customer.setIdCountry(idCountry);
         customerService.updateCustomer(customer);
 
         req.setAttribute("customers", customerService.getAllCustomers());
@@ -104,12 +122,12 @@ public class CustomerServlet extends HttpServlet {
     private void insertCustomer(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String name = req.getParameter("name");
         String address = req.getParameter("address");
-        String country = req.getParameter("country");
+        long idCountry = Long.parseLong(req.getParameter("idCountry"));
 
-        Customer customer = new Customer(customerService.getAllCustomers().size() + 1, name, address, country);
+        Customer customer = new Customer(customerService.getAllCustomers().size() + 1, name, address, idCountry);
         customerService.addCustomer(customer);
 
-        req.setAttribute("message", "Add customer success");
+        req.setAttribute("message", "Them khach hang thanh cong");
         RequestDispatcher requestDispatcher = req.getRequestDispatcher("/create.jsp");
         requestDispatcher.forward(req, resp);
     }
