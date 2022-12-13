@@ -5,7 +5,7 @@ import com.codegym.customermanager.model.Customer;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CustomerService {
+public class CustomerService implements ICustomerService {
     private List<Customer> customers;
 
 
