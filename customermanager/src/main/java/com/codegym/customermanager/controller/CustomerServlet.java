@@ -1,9 +1,11 @@
 package com.codegym.customermanager.controller;
 
+import com.codegym.customermanager.exception.CountryInvalidException;
 import com.codegym.customermanager.model.Country;
 import com.codegym.customermanager.model.Customer;
 import com.codegym.customermanager.service.CountryService;
 import com.codegym.customermanager.service.CustomerService;
+import com.codegym.customermanager.utils.ValidateUtils;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -12,6 +14,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 @WebServlet(name = "CustomerServlet" , urlPatterns = { "/customers"})
@@ -68,10 +71,23 @@ public class CustomerServlet extends HttpServlet {
     }
 
     private void showEditCustomer(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        long id = Long.parseLong(req.getParameter("id"));
-        Customer customer = customerService.findCustomerById(id);
+        String error = null;
+        Customer customer;
+        try {
+            long id = Long.parseLong(req.getParameter("id"));
+            if ((customer = customerService.findCustomerById(id)) == null) {
+                error = "ID customer not exists";
+                req.setAttribute("error", error);
+            }else{
+                req.setAttribute("customer", customer);
+            }
+        } catch (NumberFormatException numberFormatException) {
+            error = "ID customer not valid";
+            req.setAttribute("error", error);
+        }
 
-        req.setAttribute("customer", customer);
+
+
         RequestDispatcher requestDispatcher = req.getRequestDispatcher("/edit.jsp");
         requestDispatcher.forward(req, resp);
     }
@@ -96,39 +112,119 @@ public class CustomerServlet extends HttpServlet {
                 editCustomer(req, resp);
                 break;
             default:
-
         }
 
     }
 
     private void editCustomer(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        long id = Long.parseLong(req.getParameter("id"));
-        String name = req.getParameter("name");
-        String address = req.getParameter("address");
-        long idCountry = Long.parseLong(req.getParameter("idCountry"));
+        boolean flag = true;
+        List<String> errors = new ArrayList<>();
+        Customer customer = new Customer();
 
-        Customer customer = customerService.findCustomerById(id);
-        customer.setName(name);
-        customer.setAddress(address);
-        customer.setIdCountry(idCountry);
-        customerService.updateCustomer(customer);
 
-        req.setAttribute("customers", customerService.getAllCustomers());
-        RequestDispatcher requestDispatcher = req.getRequestDispatcher("/customer.jsp");
+        flag = validateIdView(errors, req, customer);
+        flag = validateFullNameView(errors, req, customer)&& flag;
+        flag = validateAddressView(errors, req, customer) && flag;
+        flag = validateCountryView(errors, req, customer) && flag;
+
+        RequestDispatcher requestDispatcher;
+        if (flag) {
+            customerService.updateCustomer(customer);
+            req.setAttribute("customers", customerService.getAllCustomers());
+            requestDispatcher = req.getRequestDispatcher("/customer.jsp");
+        }else{
+            req.setAttribute("errors", errors);
+            req.setAttribute("customer", customer);
+            requestDispatcher = req.getRequestDispatcher("/edit.jsp");
+        }
         requestDispatcher.forward(req, resp);
+
+
+
+    }
+
+    private boolean validateIdView(List<String> errors, HttpServletRequest req, Customer customer) {
+        try {
+            long id = Long.parseLong(req.getParameter("id"));
+            if (customerService.findCustomerById(id) == null) {
+                throw new NullPointerException("Customer not exists");
+            }
+            customer.setId(id);
+        } catch (NumberFormatException numberFormatException) {
+            errors.add("ID customer not valid");
+            return false;
+        } catch (NullPointerException nullPointerException) {
+            errors.add(nullPointerException.getMessage());
+            return false;
+        }
+        return true;
 
     }
 
     private void insertCustomer(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        String name = req.getParameter("name");
-        String address = req.getParameter("address");
-        long idCountry = Long.parseLong(req.getParameter("idCountry"));
+        List<String> errors = new ArrayList<>();
+        boolean flag = true;
+        Customer customer = new Customer();
 
-        Customer customer = new Customer(customerService.getAllCustomers().size() + 1, name, address, idCountry);
-        customerService.addCustomer(customer);
+        flag = validateFullNameView(errors, req, customer);     // false
+        flag = validateAddressView(errors, req, customer) && flag;      // false
+        flag = validateCountryView(errors, req, customer) && flag;
+        if (flag == true) {
+            customer.setId(customerService.getAllCustomers().size() + 1);
+            customerService.addCustomer(customer);
+            req.setAttribute("message", "Them khach hang thanh cong");
+        }else{
+            req.setAttribute("errors", errors);
+            req.setAttribute("customer", customer);
+        }
 
-        req.setAttribute("message", "Them khach hang thanh cong");
         RequestDispatcher requestDispatcher = req.getRequestDispatcher("/create.jsp");
         requestDispatcher.forward(req, resp);
+
+    }
+
+    private boolean validateCountryView(List<String> errors, HttpServletRequest req, Customer customer) {
+        long idCountry = -1;
+
+        try {
+            idCountry = Long.parseLong(req.getParameter("idCountry"));
+            // kiem tra country co hop le hay khong
+            if (countryService.findCountryById(idCountry) == null) {
+                throw new CountryInvalidException("Country is exists");
+            }
+        } catch (NumberFormatException numberFormatException) {
+            errors.add("Country is not valid");
+            return false;
+        } catch (CountryInvalidException countryInvalidException) {
+            errors.add(countryInvalidException.getMessage());
+            return false;
+        }
+        customer.setIdCountry(idCountry);
+        return true;
+    }
+
+    private boolean validateAddressView(List<String> errors, HttpServletRequest req, Customer customer) {
+        String address = req.getParameter("address");
+        customer.setAddress(address);
+        if (address.equals("")) {
+            errors.add("Address is not empty");
+            return false;
+        }
+        return true;
+    }
+
+    private boolean validateFullNameView(List<String> errors, HttpServletRequest req, Customer customer) {
+        String name = req.getParameter("name");
+        customer.setName(name);
+        if (name.equals("")) {
+            errors.add("Fullname is not empty");
+            return false;
+        }else{
+            if (ValidateUtils.isFullNameValid(name)==false) {
+                errors.add("Fullname not valid. Start with Upcase, least 4 character");
+                return false;
+            }
+        }
+        return true;
     }
 }

@@ -17,7 +17,23 @@
 <div class="container">
   <h1>Edit customer</h1>
   <form method="post">
-    <input type="hidden" name="id" value="${requestScope.customer.getId()}">
+    <c:if test="${requestScope.errors!=null}">
+      <div class="alert alert-danger" role="alert">
+        <ul>
+          <c:forEach items="${requestScope.errors}" var="error">
+            <li>${error}</li>
+          </c:forEach>
+        </ul>
+      </div>
+    </c:if>
+      <c:if test="${requestScope.error!=null}">
+          <div class="alert alert-danger" role="alert">
+              <ul>
+                  <li>${requestScope.error}</li>
+              </ul>
+          </div>
+      </c:if>
+<%--    <input type="hidden" name="id" value="${requestScope.customer.getId()}">--%>
     <label for="idName">Name: </label>
     <input type="text" id="idName" name="name" class="form-control" value="${requestScope.customer.getName()}">
 

@@ -16,4 +16,13 @@ public class CountryService {
     public List<Country> getAllCountry() {
         return countries;
     }
+
+    public Country findCountryById(long id) {
+        for (Country c : countries) {
+            if (c.getId() == id) {
+                return c;
+            }
+        }
+        return null;
+    }
 }

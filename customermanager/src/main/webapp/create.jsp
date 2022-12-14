@@ -33,16 +33,31 @@
         }
       </script>
     </c:if>
+      <c:if test="${requestScope.errors!=null}">
+          <div class="alert alert-danger" role="alert">
+              <ul>
+                  <c:forEach items="${requestScope.errors}" var="error">
+                        <li>${error}</li>
+                  </c:forEach>
+              </ul>
+          </div>
+      </c:if>
     <label for="idName">Name: </label>
-    <input type="text" id="idName" name="name" class="form-control">
+    <input type="text" id="idName" name="name" class="form-control" value="${requestScope.customer.getName()}">
 
     <label for="idAdress">Address: </label>
-    <input type="text" id="idAdress" name="address" class="form-control">
+    <input type="text" id="idAdress" name="address" class="form-control" value="${requestScope.customer.getAddress()}">
 
     <label for="idCountry">Country: </label>
-    <input type="text" id="idCountry" name="country" class="form-control">
+<%--    <input type="text" id="idCountry" name="country" class="form-control">--%>
+      <select name="idCountry" id="idCountry" class="form-control" >
+          <c:forEach items="${applicationScope.countries}" var="country">
+              <option value="${country.getId()}">${country.getName()}</option>
+          </c:forEach>
+      </select>
 
-    <button >Create</button>
+        <button >Create</button>
+      <a href="/customers"><button type="button">Back</button></a>
   </form>
 
 </div>
