@@ -5,7 +5,7 @@ import com.codegym.customermanager.model.Country;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CountryService {
+public class CountryService implements ICountryService {
     private List<Country> countries;
     public CountryService() {
         countries = new ArrayList<>();

@@ -5,6 +5,8 @@ import com.codegym.customermanager.model.Country;
 import com.codegym.customermanager.model.Customer;
 import com.codegym.customermanager.service.CountryService;
 import com.codegym.customermanager.service.CustomerService;
+import com.codegym.customermanager.service.CustomerServiceJDBC;
+import com.codegym.customermanager.service.ICustomerService;
 import com.codegym.customermanager.utils.ValidateUtils;
 
 import javax.servlet.RequestDispatcher;
@@ -19,12 +21,12 @@ import java.util.List;
 
 @WebServlet(name = "CustomerServlet" , urlPatterns = { "/customers"})
 public class CustomerServlet extends HttpServlet {
-    private CustomerService customerService;
+    private ICustomerService customerService;
     private CountryService countryService;
 
     @Override
     public void init() throws ServletException {
-        customerService = new CustomerService();
+        customerService = new CustomerServiceJDBC();
         countryService = new CountryService();
 
         List<Country> countryList = countryService.getAllCountry();
@@ -36,6 +38,7 @@ public class CustomerServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
+        System.out.println(getServletContext().getRealPath("/"));
         RequestDispatcher requestDispatcher;
         String action = req.getParameter("action");
         if (action == null) {
@@ -117,18 +120,17 @@ public class CustomerServlet extends HttpServlet {
     }
 
     private void editCustomer(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        boolean flag = true;
         List<String> errors = new ArrayList<>();
         Customer customer = new Customer();
 
 
-        flag = validateIdView(errors, req, customer);
-        flag = validateFullNameView(errors, req, customer)&& flag;
-        flag = validateAddressView(errors, req, customer) && flag;
-        flag = validateCountryView(errors, req, customer) && flag;
+        validateIdView(errors, req, customer);
+        validateFullNameView(errors, req, customer);
+        validateAddressView(errors, req, customer);
+        validateCountryView(errors, req, customer);
 
         RequestDispatcher requestDispatcher;
-        if (flag) {
+        if (errors.isEmpty()) {
             customerService.updateCustomer(customer);
             req.setAttribute("customers", customerService.getAllCustomers());
             requestDispatcher = req.getRequestDispatcher("/customer.jsp");
@@ -163,13 +165,12 @@ public class CustomerServlet extends HttpServlet {
 
     private void insertCustomer(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         List<String> errors = new ArrayList<>();
-        boolean flag = true;
         Customer customer = new Customer();
 
-        flag = validateFullNameView(errors, req, customer);     // false
-        flag = validateAddressView(errors, req, customer) && flag;      // false
-        flag = validateCountryView(errors, req, customer) && flag;
-        if (flag == true) {
+        validateFullNameView(errors, req, customer);     // false
+        validateAddressView(errors, req, customer);      // false
+        validateCountryView(errors, req, customer);
+        if (errors.isEmpty()) {
             customer.setId(customerService.getAllCustomers().size() + 1);
             customerService.addCustomer(customer);
             req.setAttribute("message", "Them khach hang thanh cong");
@@ -183,7 +184,7 @@ public class CustomerServlet extends HttpServlet {
 
     }
 
-    private boolean validateCountryView(List<String> errors, HttpServletRequest req, Customer customer) {
+    private void validateCountryView(List<String> errors, HttpServletRequest req, Customer customer) {
         long idCountry = -1;
 
         try {
@@ -194,37 +195,29 @@ public class CustomerServlet extends HttpServlet {
             }
         } catch (NumberFormatException numberFormatException) {
             errors.add("Country is not valid");
-            return false;
         } catch (CountryInvalidException countryInvalidException) {
             errors.add(countryInvalidException.getMessage());
-            return false;
         }
         customer.setIdCountry(idCountry);
-        return true;
     }
 
-    private boolean validateAddressView(List<String> errors, HttpServletRequest req, Customer customer) {
+    private void validateAddressView(List<String> errors, HttpServletRequest req, Customer customer) {
         String address = req.getParameter("address");
         customer.setAddress(address);
         if (address.equals("")) {
             errors.add("Address is not empty");
-            return false;
         }
-        return true;
     }
 
-    private boolean validateFullNameView(List<String> errors, HttpServletRequest req, Customer customer) {
+    private void validateFullNameView(List<String> errors, HttpServletRequest req, Customer customer) {
         String name = req.getParameter("name");
         customer.setName(name);
         if (name.equals("")) {
             errors.add("Fullname is not empty");
-            return false;
         }else{
             if (ValidateUtils.isFullNameValid(name)==false) {
                 errors.add("Fullname not valid. Start with Upcase, least 4 character");
-                return false;
             }
         }
-        return true;
     }
 }
