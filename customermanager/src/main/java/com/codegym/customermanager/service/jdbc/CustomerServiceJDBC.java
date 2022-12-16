@@ -12,7 +12,9 @@ public class CustomerServiceJDBC extends DatabaseContext implements ICustomerSer
     private static final String INSERT_CUSTOMER = "INSERT INTO `customer` (`name`, `address`, `idCountry`) VALUES (?, ?, ?);";
     private static final String FIND_BY_ID = "select * from customer where id = ";
     private static final String SP_GETALLCUSTOMER_BYIDCOUNTRY = "call spGetAllCustomerByIdCountry(?);";
-
+    private static final String DELETE_CUSTOMER = "DELETE FROM `customer` WHERE (`id` = ?);";
+    private static final String SELECT_CUSTOMERS_BY_KW_IDCOUNTRY = "SELECT * FROM customer where idCountry = ? and name like ?;";
+    private static final String SELECT_CUSTOMERS_BY_KW_ALLCOUNTRY = "SELECT * FROM customer where name like ?;";
 
     @Override
     public List<Customer> getAllCustomers() {
@@ -31,6 +33,36 @@ public class CustomerServiceJDBC extends DatabaseContext implements ICustomerSer
             connection.close();
         } catch (SQLException exception) {
             printSQLException(exception);
+        }
+        return customers;
+    }
+
+    @Override
+    public List<Customer> getAllCustomersByKwAndIdCountry(String kw, long idCountry) {
+        List<Customer> customers = new ArrayList<>();
+        try {
+            Connection connection = getConnection();
+            PreparedStatement preparedStatement;
+            if (idCountry == -1) {
+                //SELECT * FROM customer where name like ?";
+                preparedStatement = connection.prepareStatement(SELECT_CUSTOMERS_BY_KW_ALLCOUNTRY);
+                preparedStatement.setString(1, "%" + kw + "%");
+            }else{
+                //SELECT * FROM customer where idCountry = ? and name like ?;";
+                preparedStatement = connection.prepareStatement(SELECT_CUSTOMERS_BY_KW_IDCOUNTRY);
+                preparedStatement.setLong(1, idCountry);
+                preparedStatement.setString(2,"%" + kw + "%");
+            }
+            System.out.println(this.getClass() + " getAllCustomersByKwAndIdCountry: " + preparedStatement);
+            ResultSet rs = preparedStatement.executeQuery();
+            while (rs.next()) {
+                Customer customer = getCustomerFromResulset(rs);
+                customers.add(customer);
+            }
+
+            connection.close();
+        } catch (SQLException sqlException) {
+            
         }
         return customers;
     }
@@ -94,7 +126,18 @@ public class CustomerServiceJDBC extends DatabaseContext implements ICustomerSer
 
     @Override
     public void deleteCustomer(long id) {
+        try {
+            Connection connection = getConnection();
+            PreparedStatement preparedStatement = connection.prepareStatement(DELETE_CUSTOMER);
+            preparedStatement.setLong(1, id);
 
+            System.out.println(this.getClass() + " deleteCustomer: " + preparedStatement);
+
+            preparedStatement.executeUpdate();
+            connection.close();
+        } catch (SQLException sqlException) {
+            printSQLException(sqlException);
+        }
     }
 
     @Override

@@ -7,7 +7,14 @@
         <meta charset="utf-8">
         <title>Basic Tables | Zircos - Responsive Bootstrap 4 Admin Dashboard</title>
         <jsp:include page="/WEB-INF/admin/layout/headcss.jsp"></jsp:include>
-
+        <style>
+            .row-search-form{
+                justify-content: space-between;
+            }
+            .search-form{
+                display: flex;
+            }
+        </style>
     </head>
 
     <body data-layout="horizontal">
@@ -49,7 +56,23 @@
                         <div class="row">
                             <div class="col-sm-12">
                                 <div class="demo-box p-2">
-                                    <h4 class="header-title">List Customer</h4>
+                                    <div class="row row-search-form">
+                                        <div><h4 class="header-title">List Customer</h4></div>
+                                        <div>
+                                            <form method="get" action="/customers" class="search-form">
+                                                <input type="text" name="kw" class="mr-1" value="${requestScope.kw}">
+                                                <select name="idCountry" id="idCountry" class="form-control" class="mr-1" >
+                                                    <option value="-1">All</option>
+                                                    <c:forEach items="${applicationScope.countries}" var="country">
+                                                        <option value="${country.getId()}" <c:if test="${requestScope.idCountry == country.getId()}"> selected</c:if>>${country.getName()}
+
+                                                            </option>
+                                                    </c:forEach>
+                                                </select>
+                                                <button>Search</button>
+                                            </form>
+                                        </div>
+                                    </div>
                                     <div class="table-responsive">
                                         <table class="table m-0">
 
@@ -76,7 +99,8 @@
                                                     </c:forEach>
                                                     <td><a href="/customers?action=create"><i class="fa fa-add"></i></a>
                                                         <a href="/customers?action=edit&id=${customer.getId()}"><i class="fa fa-edit"></i> </a>
-                                                        <i class="fa fa-remove" onclick="handleDeleteClick(this)" id="${customer.getId()}"></i></td>
+                                                        <a href="/customers?action=delete&id=${customer.getId()}"><i class="fa fa-remove" ></i></a>
+                                                        </td>
                                                 </tr>
                                             </c:forEach>
 

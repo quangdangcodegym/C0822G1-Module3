@@ -20,7 +20,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-@WebServlet(name = "CustomerServlet" , urlPatterns = { "/customers"})
+@WebServlet(name = "CustomerServlet" , urlPatterns = { "/customers", ""})
 public class CustomerServlet extends HttpServlet {
     private ICustomerService customerService;
     private ICountryService countryService;
@@ -51,12 +51,7 @@ public class CustomerServlet extends HttpServlet {
                 showEditCustomer(req, resp);
                 break;
             case "delete":
-                long id = Long.parseLong(req.getParameter("id"));
-                customerService.deleteCustomer(id);
-
-                req.setAttribute("customers", customerService.getAllCustomers());
-                RequestDispatcher requestDispatcher1 = req.getRequestDispatcher("/WEB-INF/admin/customer/customer.jsp");
-                requestDispatcher1.forward(req, resp);
+                showDeleteCustomer(req, resp);
                 break;
             default:
                 showListCustomer(req, resp);
@@ -65,8 +60,29 @@ public class CustomerServlet extends HttpServlet {
 
     }
 
+    private void showDeleteCustomer(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        long id = Long.parseLong(req.getParameter("id"));
+        Customer customer = customerService.findCustomerById(id);
+
+        req.setAttribute("customer", customer);
+        RequestDispatcher requestDispatcher = req.getRequestDispatcher("/WEB-INF/admin/customer/delete.jsp");
+        requestDispatcher.forward(req, resp);
+    }
+
     private void showListCustomer(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        req.setAttribute("customers", customerService.getAllCustomers());
+        long idCountry = -1;
+        String kw = "";
+        if (req.getParameter("idCountry") != null) {
+            idCountry = Long.parseLong(req.getParameter("idCountry"));
+        }
+        if (req.getParameter("kw") != null) {
+            kw = req.getParameter("kw");
+        }
+
+
+        req.setAttribute("kw", kw);
+        req.setAttribute("idCountry", idCountry);
+        req.setAttribute("customers", customerService.getAllCustomersByKwAndIdCountry(kw, idCountry));
         RequestDispatcher requestDispatcher = req.getRequestDispatcher("/WEB-INF/admin/customer/customers.jsp");
 
         requestDispatcher.forward(req, resp);
@@ -113,9 +129,19 @@ public class CustomerServlet extends HttpServlet {
             case "edit":
                 editCustomer(req, resp);
                 break;
+
+            case "delete":
+                deleteCustomer(req, resp);
+                break;
             default:
         }
 
+    }
+
+    private void deleteCustomer(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+        long id = Long.parseLong(req.getParameter("id"));
+        customerService.deleteCustomer(id);
+        resp.sendRedirect("/customers");
     }
 
     private void editCustomer(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -132,7 +158,7 @@ public class CustomerServlet extends HttpServlet {
         if (errors.isEmpty()) {
             customerService.updateCustomer(customer);
             req.setAttribute("customers", customerService.getAllCustomers());
-            requestDispatcher = req.getRequestDispatcher("/WEB-INF/admin/customer/customer.jsp");
+            requestDispatcher = req.getRequestDispatcher("/WEB-INF/admin/customer/customers.jsp");
         }else{
             req.setAttribute("errors", errors);
             req.setAttribute("customer", customer);

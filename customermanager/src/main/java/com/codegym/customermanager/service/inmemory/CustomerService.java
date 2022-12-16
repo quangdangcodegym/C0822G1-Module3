@@ -23,6 +23,13 @@ public class CustomerService implements ICustomerService {
         return this.customers;
     }
 
+    @Override
+    public List<Customer> getAllCustomersByKwAndIdCountry(String kw, long idCountry) {
+
+
+        return null;
+    }
+
     public void addCustomer(Customer customer) {
         customers.add(customer);
     }
