@@ -10,4 +10,6 @@ public interface ICustomerService {
     Customer findCustomerById(long id);
     void updateCustomer(Customer customer);
     void deleteCustomer(long id);
+
+    List<Customer> getAllCustomerByIdCountry(long idCountry);
 }

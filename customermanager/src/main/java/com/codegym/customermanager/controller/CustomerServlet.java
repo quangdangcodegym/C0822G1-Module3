@@ -3,9 +3,10 @@ package com.codegym.customermanager.controller;
 import com.codegym.customermanager.exception.CountryInvalidException;
 import com.codegym.customermanager.model.Country;
 import com.codegym.customermanager.model.Customer;
-import com.codegym.customermanager.service.CountryService;
-import com.codegym.customermanager.service.CustomerService;
-import com.codegym.customermanager.service.CustomerServiceJDBC;
+import com.codegym.customermanager.service.ICountryService;
+import com.codegym.customermanager.service.inmemory.CountryService;
+import com.codegym.customermanager.service.jdbc.CountryServiceJDBC;
+import com.codegym.customermanager.service.jdbc.CustomerServiceJDBC;
 import com.codegym.customermanager.service.ICustomerService;
 import com.codegym.customermanager.utils.ValidateUtils;
 
@@ -22,12 +23,12 @@ import java.util.List;
 @WebServlet(name = "CustomerServlet" , urlPatterns = { "/customers"})
 public class CustomerServlet extends HttpServlet {
     private ICustomerService customerService;
-    private CountryService countryService;
+    private ICountryService countryService;
 
     @Override
     public void init() throws ServletException {
         customerService = new CustomerServiceJDBC();
-        countryService = new CountryService();
+        countryService = new CountryServiceJDBC();
 
         List<Country> countryList = countryService.getAllCountry();
         if (getServletContext().getAttribute("countries") == null) {
@@ -38,8 +39,6 @@ public class CustomerServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
-        System.out.println(getServletContext().getRealPath("/"));
-        RequestDispatcher requestDispatcher;
         String action = req.getParameter("action");
         if (action == null) {
             action = "";
@@ -56,7 +55,7 @@ public class CustomerServlet extends HttpServlet {
                 customerService.deleteCustomer(id);
 
                 req.setAttribute("customers", customerService.getAllCustomers());
-                RequestDispatcher requestDispatcher1 = req.getRequestDispatcher("/customer.jsp");
+                RequestDispatcher requestDispatcher1 = req.getRequestDispatcher("/WEB-INF/admin/customer/customer.jsp");
                 requestDispatcher1.forward(req, resp);
                 break;
             default:
@@ -68,7 +67,7 @@ public class CustomerServlet extends HttpServlet {
 
     private void showListCustomer(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         req.setAttribute("customers", customerService.getAllCustomers());
-        RequestDispatcher requestDispatcher = req.getRequestDispatcher("/customer.jsp");
+        RequestDispatcher requestDispatcher = req.getRequestDispatcher("/WEB-INF/admin/customer/customers.jsp");
 
         requestDispatcher.forward(req, resp);
     }
@@ -91,12 +90,12 @@ public class CustomerServlet extends HttpServlet {
 
 
 
-        RequestDispatcher requestDispatcher = req.getRequestDispatcher("/edit.jsp");
+        RequestDispatcher requestDispatcher = req.getRequestDispatcher("/WEB-INF/admin/customer/edit.jsp");
         requestDispatcher.forward(req, resp);
     }
 
     private void showFormCreateCustomer(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        RequestDispatcher requestDispatcher = req.getRequestDispatcher("/create.jsp");
+        RequestDispatcher requestDispatcher = req.getRequestDispatcher("/WEB-INF/admin/customer/create.jsp");
         requestDispatcher.forward(req, resp);
     }
 
@@ -133,11 +132,11 @@ public class CustomerServlet extends HttpServlet {
         if (errors.isEmpty()) {
             customerService.updateCustomer(customer);
             req.setAttribute("customers", customerService.getAllCustomers());
-            requestDispatcher = req.getRequestDispatcher("/customer.jsp");
+            requestDispatcher = req.getRequestDispatcher("/WEB-INF/admin/customer/customer.jsp");
         }else{
             req.setAttribute("errors", errors);
             req.setAttribute("customer", customer);
-            requestDispatcher = req.getRequestDispatcher("/edit.jsp");
+            requestDispatcher = req.getRequestDispatcher("/WEB-INF/admin/customer/edit.jsp");
         }
         requestDispatcher.forward(req, resp);
 
@@ -179,7 +178,7 @@ public class CustomerServlet extends HttpServlet {
             req.setAttribute("customer", customer);
         }
 
-        RequestDispatcher requestDispatcher = req.getRequestDispatcher("/create.jsp");
+        RequestDispatcher requestDispatcher = req.getRequestDispatcher("/WEB-INF/admin/customer/create.jsp");
         requestDispatcher.forward(req, resp);
 
     }
