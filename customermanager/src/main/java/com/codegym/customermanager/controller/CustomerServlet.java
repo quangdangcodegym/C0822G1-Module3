@@ -72,17 +72,35 @@ public class CustomerServlet extends HttpServlet {
     private void showListCustomer(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         long idCountry = -1;
         String kw = "";
+        int numberOfPage = 3;
+        int page = 1;
+
+
         if (req.getParameter("idCountry") != null) {
             idCountry = Long.parseLong(req.getParameter("idCountry"));
         }
         if (req.getParameter("kw") != null) {
             kw = req.getParameter("kw");
         }
+        if (req.getParameter("page") != null) {
+            page = Integer.parseInt(req.getParameter("page"));
+        }
+
+
+
+        List<Customer> customersPagging = customerService.getAllCustomersByKwAndIdCountryPagging(kw, idCountry, (page - 1) * numberOfPage , numberOfPage);
+
 
 
         req.setAttribute("kw", kw);
         req.setAttribute("idCountry", idCountry);
-        req.setAttribute("customers", customerService.getAllCustomersByKwAndIdCountry(kw, idCountry));
+        req.setAttribute("customers", customersPagging);
+
+        int noOfRecords = customerService.getNoOfRecords();
+
+        int noOfPages = (int) Math.ceil(noOfRecords * 1.0 / numberOfPage);
+        req.setAttribute("noOfPages", noOfPages);
+        req.setAttribute("currentPage", page);
         RequestDispatcher requestDispatcher = req.getRequestDispatcher("/WEB-INF/admin/customer/customers.jsp");
 
         requestDispatcher.forward(req, resp);

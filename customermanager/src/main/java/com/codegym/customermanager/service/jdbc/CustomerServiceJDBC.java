@@ -15,7 +15,10 @@ public class CustomerServiceJDBC extends DatabaseContext implements ICustomerSer
     private static final String DELETE_CUSTOMER = "DELETE FROM `customer` WHERE (`id` = ?);";
     private static final String SELECT_CUSTOMERS_BY_KW_IDCOUNTRY = "SELECT * FROM customer where idCountry = ? and name like ?;";
     private static final String SELECT_CUSTOMERS_BY_KW_ALLCOUNTRY = "SELECT * FROM customer where name like ?;";
+    private static final String SELECT_CUSTOMERS_BY_KW_ALLCOUNTRY_PAGGING = "SELECT SQL_CALC_FOUND_ROWS * FROM customer where name like ? limit ?, ?;";
+    private static final String SELECT_CUSTOMERS_BY_KW_IDCOUNTRY_PAGGING = "SELECT SQL_CALC_FOUND_ROWS * FROM customer where idCountry = ? and name like ? limit ? , ? ";
 
+    private int noOfRecords;
     @Override
     public List<Customer> getAllCustomers() {
 
@@ -63,6 +66,45 @@ public class CustomerServiceJDBC extends DatabaseContext implements ICustomerSer
             connection.close();
         } catch (SQLException sqlException) {
             
+        }
+        return customers;
+    }
+
+    @Override
+    public List<Customer> getAllCustomersByKwAndIdCountryPagging(String kw, long idCountry, int offset, int numberOfPage) {
+        List<Customer> customers = new ArrayList<>();
+        try {
+            Connection connection = getConnection();
+            PreparedStatement preparedStatement;
+            if (idCountry == -1) {
+                //SELECT * FROM customer where name like ? limit ?, ?;
+                preparedStatement = connection.prepareStatement(SELECT_CUSTOMERS_BY_KW_ALLCOUNTRY_PAGGING);
+                preparedStatement.setString(1, "%" + kw + "%");
+                preparedStatement.setInt(2,offset);
+                preparedStatement.setInt(3,numberOfPage);
+            }else{
+                //SELECT * FROM customer where idCountry = ? and name like ? limit ? , ? ";
+                preparedStatement = connection.prepareStatement(SELECT_CUSTOMERS_BY_KW_IDCOUNTRY_PAGGING);
+                preparedStatement.setLong(1, idCountry);
+                preparedStatement.setString(2,"%" + kw + "%");
+                preparedStatement.setInt(3,offset);
+                preparedStatement.setInt(4,numberOfPage);
+            }
+            System.out.println(this.getClass() + " getAllCustomersByKwAndIdCountryPagging: " + preparedStatement);
+            ResultSet rs = preparedStatement.executeQuery();
+            while (rs.next()) {
+                Customer customer = getCustomerFromResulset(rs);
+                customers.add(customer);
+            }
+
+            rs = preparedStatement.executeQuery("SELECT FOUND_ROWS()");
+
+            while (rs.next()) {
+                noOfRecords = rs.getInt(1);
+            }
+            connection.close();
+        } catch (SQLException sqlException) {
+
         }
         return customers;
     }
@@ -160,5 +202,10 @@ public class CustomerServiceJDBC extends DatabaseContext implements ICustomerSer
             printSQLException(sqlException);
         }
         return customers;
+    }
+
+    @Override
+    public int getNoOfRecords() {
+        return this.noOfRecords;
     }
 }

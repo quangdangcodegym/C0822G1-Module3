@@ -30,6 +30,11 @@ public class CustomerService implements ICustomerService {
         return null;
     }
 
+    @Override
+    public List<Customer> getAllCustomersByKwAndIdCountryPagging(String kw, long idCountry, int page, int numberOfPage) {
+        return null;
+    }
+
     public void addCustomer(Customer customer) {
         customers.add(customer);
     }
@@ -65,5 +70,10 @@ public class CustomerService implements ICustomerService {
     @Override
     public List<Customer> getAllCustomerByIdCountry(long idCountry) {
         return null;
+    }
+
+    @Override
+    public int getNoOfRecords() {
+        return 0;
     }
 }

@@ -107,6 +107,35 @@
                                             </tbody>
                                         </table>
                                     </div>
+                                    <div>
+                                        <ul class="pagination pagination-split float-right mb-0">
+                                            <c:if test="${currentPage != 1}">
+                                                <li class="page-item">
+                                                    <a href="/customers?page=${currentPage - 1}&kw=${requestScope.kw}&idCountry=${requestScope.idCountry}" class="page-link"><i class="fa fa-angle-left"></i></a>
+                                                </li>
+                                            </c:if>
+                                            <c:forEach begin="1" end="${noOfPages}" var="i">
+                                                <c:choose>
+                                                    <c:when test="${currentPage eq i}">
+                                                        <li class="page-item active">
+                                                            <a href="#" class="page-link">${i}</a>
+                                                        </li>
+                                                    </c:when>
+                                                    <c:otherwise>
+                                                        <li class="page-item">
+                                                            <a href="/customers?page=${i}&q=${requestScope.kw}&idCountry=${requestScope.idCountry}" class="page-link">${i}</a>
+                                                        </li>
+                                                    </c:otherwise>
+                                                </c:choose>
+                                            </c:forEach>
+                                            <c:if test="${currentPage lt noOfPages}">
+                                                <li class="page-item">
+                                                    <a href="/customers?page=${currentPage + 1}&kw=${requestScope.kw}&idCountry=${requestScope.idCountry}" class="page-link"><i class="fa fa-angle-right"></i></a>
+                                                </li>
+                                            </c:if>
+
+                                        </ul>
+                                    </div>
                                 </div>
                                 <!-- end card-box -->
                             </div>
