@@ -1,7 +1,7 @@
 package com.codegym.customermanager.service.jdbc;
 
 import com.codegym.customermanager.model.Customer;
-import com.codegym.customermanager.repository.CustomerRepository;
+import com.codegym.customermanager.repositoryv1.CustomerRepository;
 import com.codegym.customermanager.service.ICustomerService;
 
 import java.sql.*;
@@ -9,9 +9,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class CustomerServiceJDBC  implements ICustomerService {
-
-
-
     private CustomerRepository customerRepository;
     public CustomerServiceJDBC() {
         customerRepository = new CustomerRepository();

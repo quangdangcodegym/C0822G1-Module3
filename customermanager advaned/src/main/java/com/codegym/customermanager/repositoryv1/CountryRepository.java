@@ -1,15 +1,14 @@
-package com.codegym.customermanager.repository;
+package com.codegym.customermanager.repositoryv1;
 
 import com.codegym.customermanager.model.Country;
-import com.codegym.customermanager.model.Customer;
 
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 
-public class CountryRepository extends DatabaseContext<Country>{
+public class CountryRepository extends DatabaseContext<Country> {
     public CountryRepository() {
+        super(Country.class);
         modelMapper = new ModelMapper<Country>() {
             @Override
             public Country mapperToModel(ResultSet rs) throws SQLException {
@@ -22,29 +21,11 @@ public class CountryRepository extends DatabaseContext<Country>{
         };
     }
     @Override
-    public List<Country> getAll() {
-        return queryAll("select * from country;", modelMapper);
-    }
-
-    @Override
-    public List<Country> getAllPagging(int offset, int numberOfPage) {
-        return null;
-    }
-
-    @Override
-    public Country findById(long id) {
-        return queryFindById("select * from country where id = ?", modelMapper, Long.valueOf(id));
-    }
-    @Override
     public void add(Country obj) {
         queryDDL("INSERT INTO `country` (`name`) VALUES (?)", obj.getName());
     }
     @Override
     public void update(Country obj) {
         queryDDL("UPDATE `c8_customermanager`.`country` SET `name` = ? WHERE (`id` = ?)", obj.getName(), obj.getId());
-    }
-    @Override
-    public void delete(long id) {
-        queryDDL("DELETE FROM `country` WHERE (`id` = ?);", Long.valueOf(id));
     }
 }

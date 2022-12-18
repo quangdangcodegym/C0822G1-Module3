@@ -1,17 +1,21 @@
-package com.codegym.customermanager.repository;
+package com.codegym.customermanager.repositoryv1;
 
-import com.codegym.customermanager.model.Customer;
-
+import java.lang.reflect.Field;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
 public abstract class DatabaseContext<T>{
-    protected  ModelMapper<T> modelMapper;
+    protected ModelMapper<T> modelMapper;
+    private Class<T> tClass;
     protected String jdbcURL = "jdbc:mysql://localhost:3306/c8_customermanager";
     protected String jdbcUsername = "root";
     protected String jdbcPassword = "St180729!!";
 
+
+    public DatabaseContext(Class<T> tClass) {
+        this.tClass = tClass;
+    }
 
     protected Connection getConnection() {
         Connection connection = null;
@@ -43,8 +47,18 @@ public abstract class DatabaseContext<T>{
         }
     }
 
-    public abstract List<T> getAll();
-    public abstract List<T> getAllPagging(int offset, int numberOfPage);
+    public List<T> getAll(){
+        System.out.println(tClass.getSimpleName());
+        System.out.println(tClass.getSimpleName().toLowerCase());
+        System.out.println(tClass.getName());
+        System.out.println(tClass.getPackage());
+        String queryGetAllT = String.format("select * from %s", tClass.getSimpleName().toLowerCase());
+        return queryAll(queryGetAllT, modelMapper);
+    }
+    public List<T> getAllPagging(int offset, int numberOfPage){
+        String queryGetAllPaggingT = String.format("select * from %s limit ? , ?", tClass.getSimpleName().toLowerCase());
+        return queryAllPagging(queryGetAllPaggingT, modelMapper, Long.valueOf(offset), Long.valueOf(numberOfPage));
+    }
     public List<T> queryAll(String query, ModelMapper<T> modelMapper) {
         List<T> items = new ArrayList<>();
         try {
@@ -80,7 +94,10 @@ public abstract class DatabaseContext<T>{
         }
         return items;
     }
-    public abstract T findById(long id);
+    public T findById(long id){
+        String queryFindByIdT = String.format("select * from `%s` where id = ?", tClass.getSimpleName().toLowerCase());
+        return queryFindById(queryFindByIdT, modelMapper, Long.valueOf(id));
+    }
     public T queryFindById(String query, ModelMapper<T> modelMapper, Object... parameters){
         try {
             Connection connection = getConnection();
@@ -117,7 +134,28 @@ public abstract class DatabaseContext<T>{
             e.printStackTrace();
         }
     }
+
     public abstract void add(T obj);
+//    public void add(T obj){
+//        //queryDDL( "INSERT INTO `customer` (`name`, `address`, `idCountry`) VALUES (?, ?, ?);", obj.getName(), obj.getAddress(), obj.getIdCountry());
+//        //String queryAddT = "INSERT INTO `customer` (`name`, `address`, `idCountry`) VALUES (?, ?, ?);";
+//        String strQueryFields = getQueryFields();
+//        String strQueryValueOfFields = getQueryValueOfFields(obj);
+//        String queryAddT = "INSERT INTO `%s` (%s) VALUES (%s);";
+//    }
+
+
+    private String getQueryFields() {
+        String str = "";
+        for (int i = 0; i < tClass.getDeclaredFields().length; i++) {
+            str += String.format("`%s`", tClass.getDeclaredFields()[i].getName());
+            if (i != tClass.getDeclaredFields().length) {
+                str += ",";
+            }
+        }
+        return str;
+    }
+
     public abstract void update(T obj);
     public int queryDDL(String query, Object... parameters){
         try {
@@ -135,7 +173,10 @@ public abstract class DatabaseContext<T>{
 
     }
 
-    public abstract void delete(long id);
+    public void delete(long id){
+        String queryDeleteT = String.format("DELETE FROM `%s` WHERE (`id` = ?);", tClass.getSimpleName());
+        queryDDL(queryDeleteT, Long.valueOf(id));
+    }
 
     
 }

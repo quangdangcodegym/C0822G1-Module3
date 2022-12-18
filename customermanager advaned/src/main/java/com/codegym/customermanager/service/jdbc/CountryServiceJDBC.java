@@ -1,7 +1,7 @@
 package com.codegym.customermanager.service.jdbc;
 
 import com.codegym.customermanager.model.Country;
-import com.codegym.customermanager.repository.CountryRepository;
+import com.codegym.customermanager.repositoryv1.CountryRepository;
 import com.codegym.customermanager.service.ICountryService;
 
 import java.sql.*;
