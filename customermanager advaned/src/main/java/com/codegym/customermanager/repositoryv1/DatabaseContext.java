@@ -1,8 +1,11 @@
 package com.codegym.customermanager.repositoryv1;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public abstract class DatabaseContext<T>{
@@ -16,6 +19,7 @@ public abstract class DatabaseContext<T>{
     public DatabaseContext(Class<T> tClass) {
         this.tClass = tClass;
     }
+
 
     protected Connection getConnection() {
         Connection connection = null;
@@ -135,28 +139,133 @@ public abstract class DatabaseContext<T>{
         }
     }
 
-    public abstract void add(T obj);
-//    public void add(T obj){
-//        //queryDDL( "INSERT INTO `customer` (`name`, `address`, `idCountry`) VALUES (?, ?, ?);", obj.getName(), obj.getAddress(), obj.getIdCountry());
-//        //String queryAddT = "INSERT INTO `customer` (`name`, `address`, `idCountry`) VALUES (?, ?, ?);";
-//        String strQueryFields = getQueryFields();
-//        String strQueryValueOfFields = getQueryValueOfFields(obj);
-//        String queryAddT = "INSERT INTO `%s` (%s) VALUES (%s);";
-//    }
+    public abstract void addCustom(T obj);
+    public void add(T obj){
+        //queryDDL( "INSERT INTO `customer` (`name`, `address`, `idCountry`) VALUES (?, ?, ?);", obj.getName(), obj.getAddress(), obj.getIdCountry());
+        //String queryAddT = "INSERT INTO `customer` (`name`, `address`, `idCountry`) VALUES (?, ?, ?);";
 
 
-    private String getQueryFields() {
+        Field[] fields = queryFields(tClass);
+        String strQueryFields = convertToQueryFields(fields);
+
+        Method[] methods = queryMethodOfFields(obj);
+        Object[] params = getValueMethodOfFields(methods, obj);
+
+        String strQueryAskSymbol = converToQueryAskSymbol(params);
+
+        String queryAddT = String.format("INSERT INTO `%s` (%s) VALUES (%s);",tClass.getSimpleName().toLowerCase(), strQueryFields, strQueryAskSymbol);
+        System.out.println(queryAddT);
+        queryDDL(queryAddT, params);
+
+    }
+
+    private String converToQueryAskSymbol(Object[] params) {
         String str = "";
-        for (int i = 0; i < tClass.getDeclaredFields().length; i++) {
-            str += String.format("`%s`", tClass.getDeclaredFields()[i].getName());
-            if (i != tClass.getDeclaredFields().length) {
+        for (int i = 0; i < params.length; i++) {
+            str += "?";
+            if (i != params.length - 1) {
                 str += ",";
             }
         }
         return str;
     }
 
-    public abstract void update(T obj);
+    private String convertToQueryFields(Field[] fields) {
+        String str = "";
+        for (int i = 0; i < fields.length; i++) {
+            str += fields[i].getName();
+            if (i != fields.length - 1) {
+                str += ",";
+            }
+        }
+        return str;
+    }
+
+    private Method[] queryMethodOfFields(T obj) {
+        ArrayList<Method> list = new ArrayList<>();
+        for (int i = 0; i < tClass.getDeclaredFields().length; i++) {
+            Method m1 = findMethod("get", tClass.getDeclaredFields()[i].getName());
+            if (m1.getName().equals("getId")) {
+                continue;
+            }
+            list.add(m1);
+        }
+        Method[] items = new Method[list.size()];
+        for (int i = 0; i < items.length; i++) {
+            items[i] = list.get(i);
+        }
+        return items;
+    }
+
+    private Object[] getValueMethodOfFields(Method[] methods, T obj) {
+        Object[] objects = new Object[methods.length];
+        for (int i = 0; i < methods.length; i++) {
+            try {
+                objects[i] = methods[i].invoke(obj);
+            } catch (IllegalAccessException e) {
+                throw new RuntimeException(e);
+            } catch (InvocationTargetException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        return objects;
+    }
+    private Field[] queryFields(Class<T> tClass) {
+        List<Field> fields = new ArrayList<>();
+        for (int i = 0; i < tClass.getDeclaredFields().length; i++) {
+            if (tClass.getDeclaredFields()[i].getName().equals("id")) {
+                continue;
+            }
+            fields.add(tClass.getDeclaredFields()[i]);
+        }
+        Field[] items = new Field[fields.size()];
+        for (int i = 0; i < items.length; i++) {
+            items[i] = fields.get(i);
+        }
+        return items;
+    }
+
+    public Method findMethod(String prefix, String name) {
+        for (Method m : tClass.getDeclaredMethods()) {
+            if (m.getName().contains(prefix) && m.getName().toUpperCase().contains(name.toUpperCase())) {
+                return m;
+            }
+        }
+        return null;
+    }
+
+    public abstract void updateCustom(T obj);
+
+    public void update(T obj, long id) {
+        //UPDATE `c8_customermanager`.`customer` SET `name` = ' vdav', `address` = 'addad âv', `idCountry` = '2' WHERE (`id` = '7');
+        //queryDDL("UPDATE `customer` SET `name` = ? WHERE (`id` = ?)", obj.getName(), obj.getId());
+//        String queryUpdateT = "UPDATE `%s` SET `name` = ?, `address` = ? WHERE (`id` = ?)";
+
+        Field[] fields = queryFields(tClass);
+        String strQueryUpdateFields = getQueryUpdateFields(fields);
+
+        Method[] methods = queryMethodOfFields(obj);
+        Object[] params = getValueMethodOfFields(methods, obj);
+
+
+        String queryAddT = String.format("UPDATE `%s` SET %s WHERE (`id` = ?)",tClass.getSimpleName().toLowerCase(), strQueryUpdateFields);
+        System.out.println(queryAddT);
+        params = Arrays.copyOf(params, params.length + 1);
+        params[params.length - 1] = Long.valueOf(id);
+        queryDDL(queryAddT, params);
+    }
+
+    private String getQueryUpdateFields(Field[] fields) {
+        String str = "";
+        for (int i = 0; i < fields.length; i++) {
+            str += String.format("`%s` = ?", fields[i].getName());
+            if (i != fields.length - 1) {
+                str += ",";
+            }
+        }
+        return str;
+    }
+
     public int queryDDL(String query, Object... parameters){
         try {
             Connection connection = getConnection();

@@ -29,7 +29,7 @@ public class CustomerServiceJDBC  implements ICustomerService {
 
     @Override
     public void updateCustomer(Customer customer) {
-
+        customerRepository.update(customer, customer.getId());
     }
 
     @Override

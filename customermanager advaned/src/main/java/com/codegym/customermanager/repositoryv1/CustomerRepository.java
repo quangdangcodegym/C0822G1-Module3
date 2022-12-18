@@ -33,11 +33,11 @@ public class CustomerRepository extends DatabaseContext<Customer> {
     }
 
     @Override
-    public void add(Customer obj) {
-        queryDDL( "INSERT INTO `customer` (`name`, `address`, `idCountry`) VALUES (?, ?, ?);", obj.getName(), obj.getAddress(), obj.getIdCountry());
+    public void addCustom(Customer obj) {
+        queryDDL( "INSERT INTO `customer` (`name`, `idCountry`) VALUES (?, ?);", obj.getName(), obj.getIdCountry());
     }
     @Override
-    public void update(Customer obj) {
+    public void updateCustom(Customer obj) {
         queryDDL("UPDATE `customer` SET `name` = ? WHERE (`id` = ?)", obj.getName(), obj.getId());
     }
 }

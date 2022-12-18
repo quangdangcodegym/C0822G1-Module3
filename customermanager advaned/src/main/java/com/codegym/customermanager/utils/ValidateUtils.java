@@ -12,7 +12,7 @@ public class ValidateUtils {
     public static final String EMAIL_REGEX = "^[A-Za-z0-9._]+@[a-z]+\\.[a-z]{2,3}$";
 
     public static boolean isFullNameValid(String fullName) {
-        return Pattern.compile(FULLNAME_PATTERN).matcher(fullName).matches();
+        return Pattern.compile(NAME_REGEX).matcher(fullName).matches();
     }
     public static boolean isPasswordValid(String password) {
         return Pattern.compile(PASSWORD_PATTERN).matcher(password).matches();

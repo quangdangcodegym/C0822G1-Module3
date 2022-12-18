@@ -21,11 +21,11 @@ public class CountryRepository extends DatabaseContext<Country> {
         };
     }
     @Override
-    public void add(Country obj) {
+    public void addCustom(Country obj) {
         queryDDL("INSERT INTO `country` (`name`) VALUES (?)", obj.getName());
     }
     @Override
-    public void update(Country obj) {
+    public void updateCustom(Country obj) {
         queryDDL("UPDATE `c8_customermanager`.`country` SET `name` = ? WHERE (`id` = ?)", obj.getName(), obj.getId());
     }
 }
