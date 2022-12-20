@@ -1,0 +1,37 @@
+-- Nếu lỗi coi tìm lỗi ở đâu??
+Services -> out, tomcatlog,..
+
+-- Xem lại câu query, và các label của result set
+SELECT SQL_CALC_FOUND_ROWS * FROM customer where name like ? limit ?, ?;"
+        => tham số bat dau tu 1
+        => bắt sqlException thì nhớ printSqlException
+-- @WebServlet(name = "CustomerServlet" , urlPatterns = { "/customers", ""})
+
+
+--
+switch (action) {
+    case "create":
+        showFormCreateCustomer(req, resp);
+        break;
+    ==> Nhớ break; chỗ này
+
+req.setAttribute("idCountry", idCountry);
+req.setAttribute("customers", customersPagging);
+RequestDispatcher requestDispatcher = req.getRequestDispatcher("/WEB-INF/admin/customer/delete.jsp");
+requestDispatcher.forward(req, resp)
+
+
+----
+resp.sendRedirect("/customers");
+
+----
+<input name="username" type="text">
+<input name="password" type="password">
+===> Ở trên servet sẽ đọc thông tin của các trường client nhập thông
+qua thuộc tính name
+
+
+-- Nhớ thêm thư viện
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ taglib uri = "http://java.sun.com/jsp/jstl/core" prefix = "c" %>
+

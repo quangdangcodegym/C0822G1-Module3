@@ -16,6 +16,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -95,6 +96,10 @@ public class CustomerServlet extends HttpServlet {
         req.setAttribute("kw", kw);
         req.setAttribute("idCountry", idCountry);
         req.setAttribute("customers", customersPagging);
+
+        HttpSession httpSession = req.getSession();
+        req.setAttribute("username", httpSession.getAttribute("username"));
+        req.setAttribute("password", httpSession.getAttribute("password"));
 
         int noOfRecords = customerService.getNoOfRecords();
 

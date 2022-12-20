@@ -1,3 +1,5 @@
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ taglib uri = "http://java.sun.com/jsp/jstl/core" prefix = "c" %>
 <header id="topnav">
     <!-- Topbar Start -->
     <div class="navbar-custom">
@@ -207,7 +209,7 @@
                     <div class="dropdown-menu dropdown-menu-right profile-dropdown ">
                         <!-- item-->
                         <div class="dropdown-header noti-title">
-                            <h6 class="text-overflow m-0">Welcome !</h6>
+                            <h6 class="text-overflow m-0">Welcome ! <c:if test="${requestScope.username!=null}">${requestScope.username}</c:if></h6>
                         </div>
 
                         <!-- item-->

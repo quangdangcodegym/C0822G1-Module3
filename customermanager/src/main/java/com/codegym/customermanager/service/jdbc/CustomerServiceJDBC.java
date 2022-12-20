@@ -65,7 +65,7 @@ public class CustomerServiceJDBC extends DatabaseContext implements ICustomerSer
 
             connection.close();
         } catch (SQLException sqlException) {
-            
+            printSQLException(sqlException);
         }
         return customers;
     }
